@@ -12,11 +12,11 @@ architecture test_bench of ripple_adder_tb is
 	
   -- declare the component of your top-level design unit under test (UUT)
   component ripple_adder is
-    Port ( A : in STD_LOGIC_VECTOR (3 downto 0);
-           B : in STD_LOGIC_VECTOR (3 downto 0);
-           Cin : in STD_LOGIC;
-           S : out STD_LOGIC_VECTOR (3 downto 0);
-           Cout : out STD_LOGIC
+    Port ( i_A : in STD_LOGIC_VECTOR (3 downto 0);
+           i_B : in STD_LOGIC_VECTOR (3 downto 0);
+           i_Cin : in STD_LOGIC;
+           o_S : out STD_LOGIC_VECTOR (3 downto 0);
+           o_Cout : out STD_LOGIC
        );
    end component ripple_adder;
   
@@ -29,11 +29,11 @@ architecture test_bench of ripple_adder_tb is
 begin
 	-- PORT MAPS ----------------------------------------
 	ripple_adder_uut : ripple_adder port map (
-	   A    => w_addends(3 downto 0),
-	   B    => w_addends(7 downto 4),
-	   Cin  => w_Cin,
-	   S    => w_sum,
-	   Cout => w_Cout
+	   i_A    => w_addends(3 downto 0),
+	   i_B    => w_addends(7 downto 4),
+	   i_Cin  => w_Cin,
+	   o_S    => w_sum,
+	   o_Cout => w_Cout
 	);
 	
 	-- PROCESSES ----------------------------------------	
@@ -49,6 +49,14 @@ begin
        w_addends <= x"FF"; w_Cin <= '1'; wait for 10 ns;
 	       assert (w_sum = x"E" and w_Cout = '1') report "bad with ones" severity failure;
        -- TODO, a few other test cases
+       w_addends <= x"01"; w_Cin <= '1'; wait for 10 ns;
+	       assert (w_sum = x"2" and w_Cout = '0') report "01 C1 Fail" severity failure;
+	   w_addends <= x"42"; w_Cin <= '1'; wait for 10 ns;
+	       assert (w_sum = x"7" and w_Cout = '0') report "42 C1 Fail" severity failure;
+	   w_addends <= x"D5"; w_Cin <= '0'; wait for 10 ns;
+	       assert (w_sum = x"2" and w_Cout = '1') report "D5 C0 Fail" severity failure;
+	   w_addends <= x"A7"; w_Cin <= '1'; wait for 10 ns;
+	       assert (w_sum = x"2" and w_Cout = '1') report "A7 C1 Fail" severity failure;
 	
 		wait; -- wait forever
 	end process;	
